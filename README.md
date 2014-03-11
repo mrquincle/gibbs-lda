@@ -14,34 +14,6 @@
 
 ****************************************************************************
 
-
-                          TABLE OF CONTENTS
-
-  1. Introduction
-   1.1. Description
-   1.2. News, Comments, and Bug Reports.
-   1.3. License   
-
-  2. Compile GibbsLDA++
-   2.1. Download
-   2.2. Compiling
-
-  3. How to Use GibbsLDA++
-   3.1. Command Line & Input Parameters
-      3.1.1. Parameter Estimation from Scratch
-      3.1.2. Parameter Estimation from a Previously Estimated Model
-      3.1.3. Inference for Previously Unseen (New) Data
-   3.2 Input Data Format
-   3.3. Outputs
-      3.3.1. Outputs of Gibbs Sampling Estimation of GibbsLDA++
-      3.3.2. Outputs of Gibbs Sampling Inference for Previously Unseen Data
-   3.4. Case Study
-  
-4. Links, Acknowledgements, and References
-
-****************************************************************************
-
-
 # 1. Introduction
 
 
@@ -266,7 +238,7 @@
 
     [document_i] = [word_i1] [word_i2] ... [word_iNi]
 
-  in which all [word_ij] (i=1..M, j=1..Ni) are text strings and they are 
+  in which all \[word_ij\] (i=1..M, j=1..Ni) are text strings and they are 
   separated by the space character.
 
   Note that the terms document and word here are abstract and should not only be 
