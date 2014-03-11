@@ -1,0 +1,650 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>GibbsLDA++: A C/C++ Implementation of Latent Dirichlet Allocation (LDA) 
+using Gibbs Sampling for Parameter Estimation and Inference</title>
+</head>
+
+<body>
+
+<p align="center"><span style="font-family: Arial"><a href="http://sourceforge.net">
+<img src="http://sourceforge.net/sflogo.php?group_id=27659&amp;type=5"
+                 width="210" height="62" border="0"
+                 alt="SourceForge" align="left" /></a></span></p>
+<p align="center">&nbsp;</p>
+<p align="center">&nbsp;</p>
+<p align="center"><font face="Arial"><b><font style="font-size: 19pt">GibbsLDA++</font></b></font></p>
+<p align="center"><font style="font-size: 16pt" face="Arial">A C/C++ 
+Implementation of Latent Dirichlet Allocation (LDA) <br>
+using Gibbs Sampling for Parameter Estimation and Inference</font></p>
+<p align="center"><a href="http://gibbslda.sourceforge.net/">
+<font size="4" face="Arial">http://gibbslda.sourceforge.net/</font></a></p>
+<p align="center" style="margin-top: 0; margin-bottom: 8px">
+<font size="4" face="Arial">Copyright <b>©</b> 2007 by</font></p>
+<p align="center" style="margin-top: 0; margin-bottom: 8px">
+<font size="4" face="Arial">Xuan-Hieu Phan</font></p>
+<p align="center" style="margin-top: 0; margin-bottom: 15px">
+<font size="4" face="Arial">hieuxuan </font>
+<font face="Arial">at</font><font size="4" face="Arial"> ecei </font>
+<font size="3" face="Arial">dot</font><font size="4" face="Arial"> tohoku </font>
+<font size="3" face="Arial">dot</font><font size="4" face="Arial"> ac </font>
+<font size="3" face="Arial">dot</font><font size="4" face="Arial"> jp </font>
+<font size="3" face="Arial">or</font><font size="4" face="Arial"> pxhieu </font>
+<font size="3" face="Arial">at</font><font size="4" face="Arial"> gmail </font>
+<font size="3" face="Arial">dot</font><font size="4" face="Arial"> com<br>
+Graduate School of Information Sciences<br>
+Tohoku University</font></p>
+<hr>
+<p align="left" style="margin-top: 10px; margin-bottom: 6px"><font face="Arial">
+1. <a href="#1._Introduction_">Introduction</a></font></p>
+<p align="left" style="margin-top: 0; margin-bottom: 6px"><font face="Arial">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+1.1. <a href="#1.1._Description_">Description</a></font></p>
+<p align="left" style="margin-top: 0; margin-bottom: 6px"><font face="Arial">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+1.2. <a href="#1.2._News,_Comments,_and_Bug_Reports._">News, Comments, and Bug 
+Reports</a></font></p>
+<p align="left" style="margin-top: 0; margin-bottom: 6px"><font face="Arial">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+1.3. <a href="#1.3._License">License</a> </font></p>
+<p align="left" style="margin-top: 0; margin-bottom: 6px"><font face="Arial">2.
+<a href="#2._Compile_GibbsLDA++">Compile GibbsLDA++</a></font></p>
+<p align="left" style="margin-top: 0; margin-bottom: 6px"><font face="Arial">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+2.1. <a href="#2.1._Download">Download</a></font></p>
+<p align="left" style="margin-top: 0; margin-bottom: 6px"><font face="Arial">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+2.2. <a href="#2.2._Compiling">Compiling</a></font></p>
+<p align="left" style="margin-top: 0; margin-bottom: 6px"><font face="Arial">3.
+<a href="#3._How_to_Use_GibbsLDA++">How to Use GibbsLDA++</a></font></p>
+<p align="left" style="margin-top: 0; margin-bottom: 6px"><font face="Arial">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+3.1. <a href="#3.1._Command_Line_&_Input_Parameters">Command Line &amp; Input 
+Parameters</a></font></p>
+<p align="left" style="margin-top: 0; margin-bottom: 6px"><font face="Arial">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+3.1.1. <a href="#3.1.1._Parameter_Estimation_from_Scratch">Parameter Estimation 
+from Scratch</a></font></p>
+<p align="left" style="margin-top: 0; margin-bottom: 6px"><font face="Arial">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+3.1.2. <a href="#3.1.2._Parameter_Estimation_from_a_Previously_Estimated_Model">
+Parameter Estimation from a Previously Estimated Model</a></font></p>
+<p align="left" style="margin-top: 0; margin-bottom: 6px"><font face="Arial">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+3.1.3. <a href="#3.1.3._Inference_for_Previously_Unseen_(New)_Data">Inference 
+for Previously Unseen (New) Data</a></font></p>
+<p align="left" style="margin-top: 0; margin-bottom: 6px"><font face="Arial">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+3.2 <a href="#3.2_Input_Data_Format">Input Data Format</a></font></p>
+<p align="left" style="margin-top: 0; margin-bottom: 6px"><font face="Arial">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+3.3. <a href="#3.3._Outputs">Outputs</a></font></p>
+<p align="left" style="margin-top: 0; margin-bottom: 6px"><font face="Arial">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+3.3.1. <a href="#3.3.1._Outputs_of_Gibbs_Sampling_Estimation_of_GibbsLDA++">
+Outputs of Gibbs Sampling Estimation of GibbsLDA++</a></font></p>
+<p align="left" style="margin-top: 0; margin-bottom: 6px"><font face="Arial">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+3.3.2.
+<a href="#3.3.2._Outputs_of_Gibbs_Sampling_Inference_for_Previously_Unseen_Data">
+Outputs of Gibbs Sampling Inference for Previously Unseen Data</a></font></p>
+<p align="left" style="margin-top: 0; margin-bottom: 6px"><font face="Arial">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+3.4. <a href="#3.4._Case_Study">Case Study</a></font></p>
+<p align="left" style="margin-top: 0; margin-bottom: 10px"><font face="Arial">4.
+<a href="#4._Links,_Acknowledgements,_and_References">Links, Acknowledgements, 
+and References</a></font></p>
+<h3 align="left" style="margin-top: 30px; margin-bottom: 15px">
+<font face="Arial"><a name="1._Introduction_">1. Introduction</a></font></h3>
+<h4 align="left" style="margin-top: 25px; margin-bottom: 15px">
+<font face="Arial"><a name="1.1._Description_">1.1. Description</a></font></h4>
+<p align="left" style="margin-top: 0; margin-bottom: 15px"><font face="Arial">
+GibbsLDA++ is a C/C++ implementation of Latent Dirichlet Allocation (LDA) using 
+Gibbs Sampling technique for parameter estimation and inference. It is very fast 
+and is designed to analyze hidden/latent topic structures of large-scale 
+datasets including very large collections of text/Web documents. LDA was first 
+introduced by David Blei et al [<a href="#Blei03">Blei03</a>]. There have been 
+several implementations of this model in C (using Variational Methods), Java, 
+and Matlab. We decided to release this implementation of LDA in C/C++ using 
+Gibbs Sampling to provide an alternative choice to the topic-model community.</font></p>
+<p align="left" style="margin-top: 0; margin-bottom: 10px"><font face="Arial">
+GibbsLDA++ is useful for the following potential application areas:</font></p>
+<ul>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 5px">
+	<font face="Arial">Information Retrieval (analyzing semantic/latent 
+	topic/concept structures of large text collection for a more intelligent 
+	information search.</font></li>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 5px">
+	<font face="Arial">Document Classification/Clustering, Document 
+	Summarization, and Text/Web Data Mining community in general.</font></li>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 5px">
+	<font face="Arial">Collaborative Filtering</font></li>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 5px">
+	<font face="Arial">Content-based Image Clustering, Object Recognition, and 
+	other applications of Computer Vision in general.</font></li>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 5px">
+	<font face="Arial">Other potential applications in biological data.</font></li>
+</ul>
+<h4 align="left" style="margin-top: 25px; margin-bottom: 15px">
+<font face="Arial"><a name="1.2._News,_Comments,_and_Bug_Reports._">1.2. News, 
+Comments, and Bug Reports.</a></font></h4>
+<p align="left" style="margin-top: 0; margin-bottom: 15px"><font face="Arial">We 
+highly appreciate any suggestion, comment, and bug report.</font></p>
+<h4 align="left" style="margin-top: 25px; margin-bottom: 15px">
+<font face="Arial"><a name="1.3._License">1.3. License</a> </font></h4>
+<p align="left" style="margin-top: 0; margin-bottom: 15px"><font face="Arial">
+GibbsLDA++ is a free software; you can redistribute it and/or modify it under 
+the terms of the GNU General Public License as published by the Free Software 
+Foundation; either version 2 of the License, or (at your option) any later 
+version.<br>
+<br>
+GibbsLDA++ is distributed in the hope that it will be useful, but WITHOUT ANY 
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+PARTICULAR PURPOSE. See the GNU General Public License for more details.<br>
+<br>
+You should have received a copy of the GNU General Public License along with 
+GibbsLDA++; if not, write to the Free Software Foundation, Inc., 59 Temple 
+Place, Suite 330, Boston, MA 02111-1307 USA.</font></p>
+<h3 align="left" style="margin-top: 30px; margin-bottom: 15px">
+<font face="Arial"><a name="2._Compile_GibbsLDA++">2. Compile GibbsLDA++</a></font></h3>
+<h4 align="left" style="margin-top: 25px; margin-bottom: 15px">
+<font face="Arial"><a name="2.1._Download">2.1. Download</a></font></h4>
+<p align="left" style="margin-top: 0; margin-bottom: 15px"><font face="Arial">
+You can find and download document, source code, and case studies of GibbsLDA++ 
+at <a href="http://sourceforge.net/projects/gibbslda">
+http://sourceforge.net/projects/gibbslda</a></font></p>
+<p align="left" style="margin-top: 0; margin-bottom: 15px"><font face="Arial">
+Here are some other tools developed by the same author:</font></p>
+<ul>
+	<li>
+	<p style="margin-top: 0; margin-bottom: 8px"><font face="Arial">
+	<a href="http://flexcrfs.sourceforge.net/">FlexCRFs</a>: Flexible 
+	Conditional Random Fields</font></li>
+	<li>
+	<p style="margin-top: 0; margin-bottom: 8px"><font face="Arial">
+	<a href="http://crftagger.sourceforge.net/">CRFTagger</a>: CRF English POS 
+	Chunker</font></li>
+	<li>
+	<p style="margin-top: 0; margin-bottom: 8px"><font face="Arial">
+	<a href="http://crfchunker.sourceforge.net/">CRFChunker</a>: CRF English 
+	Phrase Chunker</font></li>
+	<li>
+	<p style="margin-top: 0; margin-bottom: 8px"><font face="Arial">
+	<a href="http://jtextpro.sourceforge.net/">JTextPro</a>: A Java-based Text 
+	Processing Toolkit</font></li>
+	<li>
+	<p style="margin-top: 0; margin-bottom: 8px"><font face="Arial">
+	<a href="http://jwebpro.sourceforge.net/">JWebPro</a>: A Java-based Web 
+	Processing Toolkit</font></li>
+	<li>
+	<p style="margin-top: 0; margin-bottom: 8px"><font face="Arial">
+	<a href="http://jvnsegmenter.sourceforge.net/">JVnSegmenter</a>: A 
+	Java-based Vietnamese Word Segmentation Tool</font></li>
+</ul>
+<h4 align="left" style="margin-top: 25px; margin-bottom: 15px">
+<font face="Arial"><a name="2.2._Compiling">2.2. Compiling</a></font></h4>
+<p align="left" style="margin-top: 0; margin-bottom: 15px"><font face="Arial">On 
+Unix/Linux/Cygwin/MinGW environments:</font></p>
+<ul>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Arial">System requirements:</font></p>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Arial">+ A C/C++ compiler and the STL library. In the </font>
+	<font face="Courier">Makefile</font><font face="Arial">, we use </font>
+	<font face="Courier">g++</font><font face="Arial"> as the default compiler 
+	command, if the C/C++ compiler on your system has another name (e.g., </font>
+	<font face="Courier">cc, cpp, CC, CPP</font><font face="Arial">, etc.), you 
+	can modify the </font><font face="Courier">CC</font><font face="Arial"> 
+	variable in the </font><font face="Courier">Makefile</font><font face="Arial"> 
+	in order to use </font><font face="Courier">make</font><font face="Arial"> 
+	utility smoothly.</font><p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Arial">+ The computational time of GibbsLDA++ much depends on 
+	the size of input data, the CPU speed, and the memory size. If your dataset 
+	is quite large (e.g., larger than 100,000 documents or so), it is better to 
+	train GibbsLDA++ on a minimum of 2GHz CPU, 1Gb RAM system.</font></li>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Arial">Untar and unzip GibbsLDA++:</font></li>
+</ul>
+<blockquote>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">$ gunzip GibbsLDA++.tar.gz</font></p>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">$ tar -xf GibbsLDA++.tar</font></p>
+</blockquote>
+<ul>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Arial">Go to the home directory of GibbsLDA++ (i.e., GibbsLDA++ 
+	directory), type:</font></li>
+</ul>
+<blockquote>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">$ make clean</font></p>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">$ make all</font></p>
+</blockquote>
+<h3 align="left" style="margin-top: 30px; margin-bottom: 15px">
+<font face="Arial"><a name="3._How_to_Use_GibbsLDA++">3. How to Use GibbsLDA++</a></font></h3>
+<h4 align="left" style="margin-top: 25px; margin-bottom: 15px">
+<font face="Arial"><a name="3.1._Command_Line_&amp;_Input_Parameters">3.1. 
+Command Line &amp; Input Parameters</a></font></h4>
+<p align="left" style="margin-top: 0; margin-bottom: 15px"><font face="Arial">
+After compiling GibbsLDA++, we have an executable file </font>
+<font face="Courier">lda</font><font face="Arial"> in the </font>
+<font face="Courier">GibbsLDA++/src</font><font face="Arial"> directory. We use 
+this for parameter estimation and inference for new data.</font></p>
+<h5 align="left" style="margin-top: 0; margin-bottom: 15px"><font face="Arial">
+<a name="3.1.1._Parameter_Estimation_from_Scratch">3.1.1. Parameter Estimation 
+from Scratch</a></font></h5>
+<blockquote>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">$ lda -est [-alpha &lt;double&gt;] [-beta &lt;double&gt;] [-ntopics 
+	&lt;int&gt;] [-niters &lt;int&gt;] [-savestep &lt;int&gt;] [-twords &lt;int&gt;] -dfile &lt;string&gt;</font></p>
+</blockquote>
+<p align="left" style="margin-top: 0; margin-bottom: 15px"><font face="Arial">in 
+which (parameters in [ ] are optional):</font></p>
+<ul>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">-est</font><font face="Arial">: Estimate the LDA model 
+	from scratch</font></li>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">-alpha &lt;double&gt;</font><font face="Arial">: The value of 
+	alpha, hyper-parameter of LDA. The default value of alpha is 50 / K (K is the 
+	the number of topics). See&nbsp; [<a href="#Griffiths04">Griffiths04</a>] 
+	for a detailed discussion of choosing alpha and beta values.</font></li>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">-beta &lt;double&gt;</font><font face="Arial">: The value of 
+	beta, also the hyper-parameter of LDA. Its default value is 0.1</font></li>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">-ntopics &lt;int&gt;</font><font face="Arial">: The number of 
+	topics. Its default value is 100. This depends on the input dataset. See [<a href="#Griffiths04">Griffiths04</a>] 
+	and [<a href="#Blei03">Blei03</a>] for a more careful discussion of 
+	selecting the number of topics.</font></li>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">-niters &lt;int&gt;</font><font face="Arial">: The number of 
+	Gibbs sampling iterations. The default value is 2000.</font></li>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">-savestep &lt;int&gt;</font><font face="Arial">: The step 
+	(counted by the number of Gibbs sampling iterations) at which the LDA model 
+	is saved to hard disk. The default value is 200.</font></li>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">-twords &lt;int&gt;</font><font face="Arial">: The number of 
+	most likely words for each topic. The default value is zero. If you set 
+	this parameter a value larger than zero, e.g., 20, GibbsLDA++ will print out 
+	the list of top 20 most likely words per each topic each time it save the 
+	model to hard disk according to the parameter </font><font face="Courier">
+	savestep</font><font face="Arial"> above.</font></li>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">-dfile &lt;string&gt;</font><font face="Arial">: The input 
+	training data file. See <a href="#3.2_Input_Data_Format">Section 3.2</a> for 
+	a description of input data format.</font></li>
+</ul>
+<h5 align="left" style="margin-top: 0; margin-bottom: 15px"><font face="Arial">
+<a name="3.1.2._Parameter_Estimation_from_a_Previously_Estimated_Model">3.1.2. 
+Parameter Estimation from a Previously Estimated Model</a></font></h5>
+<blockquote>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">$ lda -estc -dir &lt;string&gt; -model &lt;string&gt; [-niters &lt;int&gt;] 
+	-savestep &lt;int&gt;] [-twords &lt;int&gt;]</font></p>
+</blockquote>
+<p align="left" style="margin-top: 0; margin-bottom: 15px"><font face="Arial">in 
+which (parameters in [ ] are optional):</font></p>
+<ul>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">-estc</font><font face="Arial">: Continue to estimate 
+	the model from a previously estimated model.</font></li>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">-dir &lt;string&gt;</font><font face="Arial">: The directory 
+	contain the previously estimated model</font></li>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">-model &lt;string&gt;</font><font face="Arial">: The name of 
+	the previously estimated model. See <a href="#3.3._Outputs">Section 3.3</a> 
+	to know how GibbsLDA++ saves outputs on hard disk.</font></li>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">-niters &lt;int&gt;</font><font face="Arial">: The number of 
+	Gibbs sampling iterations to continue estimating. The default value is 2000.</font></li>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">-savestep &lt;int&gt;</font><font face="Arial">: The step 
+	(counted by the number of Gibbs sampling iterations) at which the LDA model 
+	is saved to hard disk. The default value is 200.</font></li>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">-twords &lt;int&gt;</font><font face="Arial">: The number of 
+	most likely words for each topic. The default value is zero. If you set 
+	this parameter a value larger than zero, e.g., 20, GibbsLDA++ will print out 
+	the list of top 20 most likely words per each topic each time it save the 
+	model to hard disk according to the parameter </font><font face="Courier">
+	savestep</font><font face="Arial"> above.</font></li>
+</ul>
+<h5 align="left" style="margin-top: 0; margin-bottom: 15px"><font face="Arial">
+<a name="3.1.3._Inference_for_Previously_Unseen_(New)_Data">3.1.3. Inference for 
+Previously Unseen (New) Data</a></font></h5>
+<blockquote>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">$ lda -inf -dir &lt;string&gt; -model &lt;string&gt; [-niters &lt;int&gt;] 
+	[-twords &lt;int&gt;] -dfile &lt;string&gt;</font></p>
+</blockquote>
+<p align="left" style="margin-top: 0; margin-bottom: 15px"><font face="Arial">in 
+which (parameters in [ ] are optional):</font></p>
+<ul>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">-inf</font><font face="Arial">: Do inference for 
+	previously unseen (new) data using a previously estimated LDA model.</font></li>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">-dir &lt;string&gt;</font><font face="Arial">: The directory 
+	contain the previously estimated model </font></li>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">-model &lt;string&gt;</font><font face="Arial">: The name of 
+	the previously estimated model. See <a href="#3.3._Outputs">Section 3.3</a> 
+	to know how GibbsLDA++ saves outputs on hard disk.</font></li>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">-niters &lt;int&gt;</font><font face="Arial">: The number of 
+	Gibbs sampling iterations for inference. The default value is 20.</font></li>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">-twords &lt;int&gt;</font><font face="Arial">: The number of 
+	most likely words for each topic of the new data. The default value is 
+	zero. If you set this parameter a value larger than zero, e.g., 20, GibbsLDA++ 
+	will print out the list of top 20 most likely words per each topic after 
+	inference.</font></li>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">-dfile &lt;string&gt;</font><font face="Arial">:The file 
+	containing new data. See <a href="#3.2_Input_Data_Format">Section 3.2</a> 
+	for a description of input data format.</font></li>
+</ul>
+<h4 align="left" style="margin-top: 25px; margin-bottom: 15px">
+<font face="Arial"><a name="3.2_Input_Data_Format">3.2 Input Data Format</a></font></h4>
+<p align="left" style="margin-top: 0; margin-bottom: 15px"><font face="Arial">
+Both data for training/estimating the model and new data (i.e., previously 
+unseen data) have the same format as follows:</font></p>
+<blockquote>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">[M]<br>
+	[document<sub>1</sub>]<br>
+	[document<sub>2</sub>]<br>
+	...<br>
+	[document<sub>M</sub>]</font></p>
+</blockquote>
+<p align="left" style="margin-top: 0; margin-bottom: 15px"><font face="Arial">in 
+which the first line is the total number for documents </font>
+<font face="Courier">[M]</font><font face="Arial">. Each line after that is one 
+document. </font><font face="Courier">[document<sub>i</sub>]</font><font face="Arial"> 
+is the </font><font face="Courier">i<sup>th</sup></font><font face="Arial"> 
+document of the dataset that consists of a list of </font><font face="Courier">N<sub>i</sub></font><font face="Arial"> 
+words/terms.</font></p>
+<blockquote>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">[document<sub>i</sub>] = [word<sub>i1</sub>] [word<sub>i2</sub>] 
+	... [word<sub>iNi</sub>]</font></p>
+</blockquote>
+<p align="left" style="margin-top: 0; margin-bottom: 15px"><font face="Arial">in 
+which all </font><font face="Courier">[word<sub>ij</sub>] (i=1..M, j=1..N<sub>i</sub>)</font><font face="Arial"> 
+are text strings and they are separated by the blank character.</font></p>
+<p align="left" style="margin-top: 0; margin-bottom: 15px"><font face="Arial">
+<b>Note that</b> the terms <i>document</i> and <i>word</i> here are abstract and should 
+not only be understood as normal text documents. This is because LDA can be used to 
+discover the underlying topic structures of any kind of discrete data. 
+Therefore, GibbsLDA++ is not limited to text and natural language processing but 
+can also be applied to other kinds of data like images and biological sequences. Also, keep in mind that for text/Web data collections, we should 
+first preprocess the data (e.g., removing stop words and rare words, stemming, 
+etc.) before estimating with GibbsLDA++.</font></p>
+<h4 align="left" style="margin-top: 25px; margin-bottom: 15px">
+<font face="Arial"><a name="3.3._Outputs">3.3. Outputs</a></font></h4>
+<h5 align="left" style="margin-top: 0; margin-bottom: 15px"><font face="Arial">
+<a name="3.3.1._Outputs_of_Gibbs_Sampling_Estimation_of_GibbsLDA++">3.3.1. 
+Outputs of Gibbs Sampling Estimation of GibbsLDA++</a></font></h5>
+<p align="left" style="margin-top: 0; margin-bottom: 15px"><font face="Arial">
+Outputs of Gibbs sampling estimation of GibbsLDA++ include the following files:</font></p>
+<blockquote>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">&lt;model_name&gt;.others<br>
+	&lt;model_name&gt;.phi <br>
+	&lt;model_name&gt;.theta<br>
+	&lt;model_name&gt;.tassign<br>
+	&lt;model_name&gt;.twords</font></p>
+</blockquote>
+<p align="left" style="margin-top: 0; margin-bottom: 15px"><font face="Arial">in 
+which:</font></p>
+<ul>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">&lt;model_name&gt;</font><font face="Arial">: is the name of 
+	a LDA model corresponding to the time step it was saved on the hard disk. 
+	For example, the name of the model was saved at the Gibbs sampling iteration 
+	400<sup>th</sup> will be </font><font face="Courier">model-00400</font><font face="Arial">. 
+	Similarly, the model was saved at the 1200<sup>th</sup> iteration is </font>
+	<font face="Courier">model-01200</font><font face="Arial">. The model name 
+	of the last Gibbs sampling iteration is </font><font face="Courier">
+	model-final</font><font face="Arial">.</font></li>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">&lt;model_name&gt;.others</font><font face="Arial">: This 
+	file contains some parameters of LDA model, such as: </font></li>
+</ul>
+<blockquote>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">alpha=?<br>
+	beta=?</font><font face="Arial"><br>
+	</font><font face="Courier">ntopics=?</font><font face="Arial"> # i.e., 
+	number of topics<br>
+	</font><font face="Courier">ndocs=?</font><font face="Arial"> # i.e., number 
+	of documents<br>
+	</font><font face="Courier">nwords=?</font><font face="Arial"> # i.e., the 
+	vocabulary size<br>
+	</font><font face="Courier">liter=?</font><font face="Arial"> # i.e., the 
+	Gibbs sampling iteration at which the model was saved</font></p>
+</blockquote>
+<ul>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">&lt;model_name&gt;.phi</font><font face="Arial">: This file 
+	contains the word-topic distributions, i.e., </font><font face="Courier">
+	p(word<sub>w</sub>|topic<sub>t</sub>)</font><font face="Arial">. Each line 
+	is a topic, each column is a word in the vocabulary</font></li>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">&lt;model_name&gt;.theta</font><font face="Arial">: This file 
+	contains the topic-document distributions, i.e., </font>
+	<font face="Courier">p(topic<sub>t</sub>|document<sub>m</sub>)</font><font face="Arial">. 
+	Each line is a document and each column is a topic.</font></li>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">&lt;model_name&gt;.tassign</font><font face="Arial">: This 
+	file contains the topic assignments for words in training data. Each line is 
+	a document that consists of a list of </font><font face="Courier">&lt;word<sub>ij</sub>&gt;:&lt;topic 
+	of word<sub>ij</sub>&gt;</font></li>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">&lt;model_file&gt;.twords</font><font face="Arial">: This 
+	file contains </font><font face="Courier">twords</font><font face="Arial"> 
+	most likely words of each topic. </font><font face="Courier">twords</font><font face="Arial"> 
+	is specified in the command line (see
+	<a href="#3.1.1._Parameter_Estimation_from_Scratch">Sections 3.1.1</a> and
+	<a href="#3.1.2._Parameter_Estimation_from_a_Previously_Estimated_Model">
+	3.1.2</a>).</font></li>
+</ul>
+<p align="left" style="margin-top: 0; margin-bottom: 15px"><font face="Arial">
+GibbsLDA++ also saves a file called </font><font face="Courier">wordmap.txt</font><font face="Arial"> 
+that contains the maps between words and word's IDs (integer). This is because 
+GibbsLDA++ works directly with integer IDs of words/terms inside instead of text 
+strings.</font></p>
+<h5 align="left" style="margin-top: 0; margin-bottom: 15px"><font face="Arial">
+<a name="3.3.2._Outputs_of_Gibbs_Sampling_Inference_for_Previously_Unseen_Data">
+3.3.2. Outputs of Gibbs Sampling Inference for Previously Unseen Data</a></font></h5>
+<p align="left" style="margin-top: 0; margin-bottom: 15px"><font face="Arial">
+The outputs of GibbsLDA++ inference are almost the same as those of the 
+estimation process except that the contents of those files are of the new data. 
+The </font><font face="Courier">&lt;model_name&gt;</font><font face="Arial"> is 
+exactly the same as the filename of the input (new) data.</font></p>
+<h4 align="left" style="margin-top: 25px; margin-bottom: 15px">
+<font face="Arial"><a name="3.4._Case_Study">3.4. Case Study</a></font></h4>
+<p align="left" style="margin-top: 0; margin-bottom: 15px"><font face="Arial">
+For example, we want to estimate a LDA model for a collection of documents 
+stored in file called </font><font face="Courier">models/casestudy/trndocs.dat</font><font face="Arial"> 
+and then use that model to do inference for new data stored in file </font>
+<font face="Courier">models/casestudy/newdocs.dat</font><font face="Arial">.<br>
+<br>
+We want to estimate for 100 topics with </font><font face="Courier">alpha</font><font face="Arial"> 
+= 0.5 and </font><font face="Courier">beta</font><font face="Arial"> = 0.1. We 
+want to perform 1000 Gibbs sampling iterations, save a model at every 100 
+iterations, and each time a model is saved, print out the list of 20 most likely 
+words for each topic. Supposing that we are now at the home directory of 
+GibbsLDA++, We will execute the following command to estimate LDA model from 
+scratch:</font></p>
+<blockquote>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">$ src/lda -est -alpha 0.5 -beta 0.1 -ntopics 100 
+	-niters 1000 -savestep 100 -twords 20 -dfile models/casestudy/trndocs.dat</font></p>
+</blockquote>
+<p align="left" style="margin-top: 0; margin-bottom: 15px"><font face="Arial">
+Now look into the </font><font face="Courier">models/casestudy</font><font face="Arial"> 
+directory, we can see the outputs as described in
+<a href="#3.3.1._Outputs_of_Gibbs_Sampling_Estimation_of_GibbsLDA++">Section 
+3.3.1</a>.</font></p>
+<p align="left" style="margin-top: 0; margin-bottom: 15px"><font face="Arial">
+Now, we want to continue to perform another 800 Gibbs sampling iterations from 
+the previously estimated model </font><font face="Courier">model-01000</font><font face="Arial"> 
+with </font><font face="Courier">savestep </font><font face="Arial">= 100,
+</font><font face="Courier">twords </font><font face="Arial">= 30, we perform 
+the following command:</font></p>
+<blockquote>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">$ src/lda -estc -dir models/casestudy/ -model 
+	model-01000 -niters 800 -savestep 100 -twords 30</font></p>
+</blockquote>
+<p align="left" style="margin-top: 0; margin-bottom: 15px"><font face="Arial">
+Now, look into the casestudy directory to see the outputs.</font></p>
+<p align="left" style="margin-top: 0; margin-bottom: 15px"><font face="Arial">
+Now, if we want to do inference (30 Gibbs sampling iterations) for the new data
+</font><font face="Courier">newdocs.dat</font><font face="Arial"> (note that the 
+new data file is stored in the same directory of the LDA models) using one of 
+the previously estimated LDA models, for example </font><font face="Courier">
+model-01800</font><font face="Arial">, we perform the following command:</font></p>
+<blockquote>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">$ src/lda -inf -dir models/casestudy/ -model 
+	model-01800 -niters 30 -twords 20 -dfile newdocs.dat</font></p>
+</blockquote>
+<p align="left" style="margin-top: 0; margin-bottom: 15px"><font face="Arial">
+Now, look into the </font><font face="Courier">casestudy</font><font face="Arial"> 
+directory, we can see the outputs of the inferences:</font></p>
+<blockquote>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Courier">newdocs.dat.others<br>
+	newdocs.dat.phi<br>
+	newdocs.dat.tassign<br>
+	newdocs.dat.theta<br>
+	newdocs.dat.twords</font></p>
+</blockquote>
+<h3 align="left" style="margin-top: 30px; margin-bottom: 15px">
+<font face="Arial"><a name="4._Links,_Acknowledgements,_and_References">4. 
+Links, Acknowledgements, and References</a></font></h3>
+<h4 align="left" style="margin-top: 25px; margin-bottom: 15px">
+<font face="Arial"><a name="4.1._Links_">4.1. Links</a></font></h4>
+<p align="left" style="margin-top: 0; margin-bottom: 15px"><font face="Arial">
+Here are some pointers to other implementations of LDA:</font></p>
+<ul>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 10px">
+	<font face="Arial">
+	<a href="http://www.cs.princeton.edu/~blei/lda-c/index.html">LDA-C</a> (Variational 
+	Methods)</font></li>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 10px">
+	<font face="Arial">
+	<a href="http://psiexp.ss.uci.edu/research/programs_data/toolbox.htm">Matlab 
+	Topic Modeling</a></font></li>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 10px">
+	<font face="Arial"><a href="http://www.arbylon.net/projects/">Java version 
+	of LDA-C and a short Java version of Gibbs Sampling for LDA</a></font></li>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 10px">
+	<font face="Arial"><a href="http://chasen.org/~daiti-m/dist/lda/">LDA 
+	package</a> (using Variational Methods, including C and Matlab code)</font></li>
+</ul>
+<h4 align="left" style="margin-top: 25px; margin-bottom: 15px">
+<font face="Arial"><a name="4.2._Acknowledgements_">4.2. Acknowledgements</a></font></h4>
+<p align="left" style="margin-top: 0; margin-bottom: 15px"><font face="Arial">
+Our code is based on the
+<a href="http://www.arbylon.net/projects/LdaGibbsSampler.java">Java code</a> of 
+Gregor Heinrich and the theoretical description of Gibbs Sampling for LDA in [<a href="#Heinrich">Heinrich</a>]. 
+I would like to thank Heinrich for sharing the code and a comprehensive 
+technical report.</font></p>
+
+<p style="margin-bottom: 0"><span style="font-family: Arial">We would like to thank Sourceforge.net for hosting this project.</span></p>
+<p><span style="font-family: Arial"><a href="http://sourceforge.net"><img src="http://sourceforge.net/sflogo.php?group_id=27659&amp;type=5"
+                 width="210" height="62" border="0"
+                 alt="SourceForge" /></a></span></p>
+
+<h4 align="left" style="margin-top: 25px; margin-bottom: 15px">
+<font face="Arial"><a name="4.3._References">4.3. References</a></font></h4>
+<ul>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 10px">
+	<font face="Arial">[<a name="Andrieu03">Andrieu03</a>] 
+C. Andrieu, N.D. Freitas, A. Doucet, and M. Jordan:
+	<a href="http://citeseer.ist.psu.edu/andrieu03introduction.html">An introduction 
+to MCMC for machine learning</a>, Machine Learning (2003)</font></p></li>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 10px">
+	<font face="Arial">[<a name="Blei03">Blei03</a>] 
+D. Blei, A. Ng, and M. Jordan:
+	<a href="http://citeseer.ist.psu.edu/blei03latent.html">Latent Dirichlet 
+Allocation</a>, Journal of Machine Learning Research (2003). </font></p></li>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 10px">
+	<font face="Arial">[<a name="Blei07">Blei07</a>] 
+D. Blei and J. Lafferty:
+	<a href="http://www.cs.princeton.edu/~blei/papers/BleiLafferty2007.pdf">A 
+correlated topic model of Science</a>, The Annals of Applied Statistics (2007).</font></p>
+	</li>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 10px">
+	<font face="Arial">[<a name="Griffiths">Griffiths</a>] 
+T. Griffiths: <a href="http://citeseer.ist.psu.edu/613963.html">Gibbs sampling 
+in the generative model of Latent Dirichlet Allocation</a>, Technical Report.
+	</font></p></li>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 10px">
+	<font face="Arial">[<a name="Griffiths04">Griffiths04</a>] 
+T. Griffiths and M. Steyvers:
+	<a href="http://www.pnas.org/cgi/reprint/0307752101v1.pdf">Finding scientific 
+topics</a>, Proc. of the National Academy of Sciences (2004).</font></p></li>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 10px">
+	<font face="Arial">[<a name="Heinrich">Heinrich</a>] 
+G. Heinrich: <a href="http://www.arbylon.net/publications/text-est.pdf">Parameter estimation for text analysis</a>, Technical Report.</font></p>
+	</li>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 10px">
+	<font face="Arial">[<a name="Hofmann99">Hofmann99</a>] 
+T. Hofmann: <a href="http://www.cs.brown.edu/~th/papers/Hofmann-UAI99.pdf">Probabilistic latent semantic analysis</a>, Proc. of UAI (1999).</font></p>
+	</li>
+	<li>
+	<p align="left" style="margin-top: 0; margin-bottom: 15px">
+	<font face="Arial">[<a name="Wei06">Wei06</a>] 
+X. Wei and W.B. Croft: <a href="http://ciir.cs.umass.edu/pubfiles/ir-464.pdf">LDA-based document models for ad-hoc retrieval</a>, Proc. of ACM SIGIR (2006).</font></p>
+	</li>
+</ul>
+<hr>
+<p align="center" style="margin-top: 0; margin-bottom: 10px"><font face="Arial">
+Last updated July 15, 2007</font></p>
+<p align="center" style="margin-top: 0; margin-bottom: 10px">&nbsp;</p>
+
+</body>
+
+</html>
