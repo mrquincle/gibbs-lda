@@ -29,8 +29,8 @@
  *   http://www.arbylon.net/publications/text-est.pdf
  */
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <time.h>
 #include "constants.h"
 #include "strtokenizer.h"
@@ -237,7 +237,7 @@ int model::load_model(string model_name) {
     string filename = dir + model_name + tassign_suffix;
     FILE * fin = fopen(filename.c_str(), "r");
     if (!fin) {
-	printf("Cannot open file %d to load model!\n", filename.c_str());
+	printf("Cannot open file %s to load model!\n", filename.c_str());
 	return 1;
     }
     
