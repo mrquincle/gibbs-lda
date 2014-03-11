@@ -17,16 +17,16 @@
 
                           TABLE OF CONTENTS
 
-1. Introduction
+  1. Introduction
    1.1. Description
    1.2. News, Comments, and Bug Reports.
    1.3. License   
 
-2. Compile GibbsLDA++
+  2. Compile GibbsLDA++
    2.1. Download
    2.2. Compiling
 
-3. How to Use GibbsLDA++
+  3. How to Use GibbsLDA++
    3.1. Command Line & Input Parameters
       3.1.1. Parameter Estimation from Scratch
       3.1.2. Parameter Estimation from a Previously Estimated Model
@@ -36,7 +36,7 @@
       3.3.1. Outputs of Gibbs Sampling Estimation of GibbsLDA++
       3.3.2. Outputs of Gibbs Sampling Inference for Previously Unseen Data
    3.4. Case Study
-
+  
 4. Links, Acknowledgements, and References
 
 ****************************************************************************
