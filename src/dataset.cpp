@@ -37,7 +37,7 @@ int dataset::write_wordmap(string wordmapfile, mapword2id * pword2id) {
     }    
     
     mapword2id::iterator it;
-    fprintf(fout, "%d\n", pword2id->size());
+    fprintf(fout, "Wordmap size %zu\n", pword2id->size());
     for (it = pword2id->begin(); it != pword2id->end(); it++) {
 	fprintf(fout, "%s %d\n", (it->first).c_str(), it->second);
     }
