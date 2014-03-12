@@ -326,7 +326,7 @@ int model::save_model_tassign(string filename) {
 	return 1;
     }
 
-    // wirte docs with topic assignments for words
+    // write docs with topic assignments for words
     for (i = 0; i < ptrndata->M; i++) {    
 	for (j = 0; j < ptrndata->docs[i]->length; j++) {
 	    fprintf(fout, "%d:%d ", ptrndata->docs[i]->words[j], z[i][j]);
@@ -402,18 +402,30 @@ int model::save_model_twords(string filename) {
 	printf("Cannot open file %s to save!\n", filename.c_str());
 	return 1;
     }
-    
+
+    printf("Number of most likely words per topic: %i\n", twords);
     if (twords > V) {
+	printf("Set number of most likely words to V: %i\n", V);
 	twords = V;
     }
     mapid2word::iterator it;
-    
+
+    if (twords > 0) {
+    	dataset::read_wordmap(dir + wordmapfile, &id2word);
+    }
+    printf("Size of id2word: %zu\n", id2word.size());
+
+//    for (it = id2word.begin(); it != id2word.end(); it++) {
+//	    printf("%d ", it->first);
+//    }
+
     for (int k = 0; k < K; k++) {
 	vector<pair<int, double> > words_probs;
 	pair<int, double> word_prob;
 	for (int w = 0; w < V; w++) {
 	    word_prob.first = w;
 	    word_prob.second = phi[k][w];
+//	    printf("%f ", word_prob.second);
 	    words_probs.push_back(word_prob);
 	}
     
@@ -671,9 +683,9 @@ int model::init_estc() {
 
     p = new double[K];
 
-    // load moel, i.e., read z and ptrndata
+    // load model, i.e., read z and ptrndata
     if (load_model(model_name)) {
-	printf("Fail to load word-topic assignmetn file of the model!\n");
+	printf("Fail to load word-topic assignment file of the model!\n");
 	return 1;
     }
 
@@ -776,6 +788,21 @@ void model::estimate() {
     save_model(utils::generate_model_name(-1));
 }
 
+/**
+ * This demonstrates the nature of Gibbs sampling, namely some pop and push action on a stack (of counting variables).
+ *
+ * We sample a topic z_i from the full conditional probability distribution:
+ *   p(z_i=j | z_\i, w) = 
+ *     (n_\i, j(w_i) + \beta) / (n_\i, j(.) + W * \beta) * 
+ *     (n_\i, j(d_i) + \alpha) / (n_\i, .(d_i) + K * \alpha)
+ *
+ * Here z_\i indicates all z except for z_i.
+ *
+ * @param m
+ *   document, index of the document to sample
+ * @param n
+ *   word, index of the word to sample (does not need to occur in the document)
+ */
 int model::sampling(int m, int n) {
     // remove z_i from the count variables
     int topic = z[m][n];
