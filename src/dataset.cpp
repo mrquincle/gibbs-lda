@@ -149,9 +149,12 @@ int dataset::read_trndata(string dfile, string wordmapfile) {
     V = 0;
     
     for (int i = 0; i < M; i++) {
+	// read next line from file
 	fgets(buff, BUFF_SIZE_LONG - 1, fin);
 	line = buff;
 	strtokenizer strtok(line, " \t\r\n");
+
+	// length is number of non-unique words
 	int length = strtok.count_tokens();
 
 	if (length <= 0) {
@@ -164,13 +167,15 @@ int dataset::read_trndata(string dfile, string wordmapfile) {
 	// allocate new document
 	document * pdoc = new document(length);
 	
+	// iterate over all words found
 	for (int j = 0; j < length; j++) {
 	    it = word2id.find(strtok.token(j));
 	    if (it == word2id.end()) {
-		// word not found, i.e., new word
+		// word not found, i.e., new word, add to vocabulary, set its id to vocabulary size
 		pdoc->words[j] = word2id.size();
 		word2id.insert(pair<string, int>(strtok.token(j), word2id.size()));
 	    } else {
+		// existing word, set its id in map
 		pdoc->words[j] = it->second;
 	    }
 	}

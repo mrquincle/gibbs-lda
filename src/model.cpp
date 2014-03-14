@@ -410,14 +410,10 @@ int model::save_model_twords(string filename) {
     }
     mapid2word::iterator it;
 
-    if (twords > 0) {
-    	dataset::read_wordmap(dir + wordmapfile, &id2word);
+    if (!id2word.size()) {
+	printf("Something went wrong with loading the words, size of id2word: %zu\n", id2word.size());
+	return -1;
     }
-    printf("Size of id2word: %zu\n", id2word.size());
-
-//    for (it = id2word.begin(); it != id2word.end(); it++) {
-//	    printf("%d ", it->first);
-//    }
 
     for (int k = 0; k < K; k++) {
 	vector<pair<int, double> > words_probs;
@@ -425,7 +421,6 @@ int model::save_model_twords(string filename) {
 	for (int w = 0; w < V; w++) {
 	    word_prob.first = w;
 	    word_prob.second = phi[k][w];
-//	    printf("%f ", word_prob.second);
 	    words_probs.push_back(word_prob);
 	}
     
@@ -790,10 +785,23 @@ void model::estimate() {
 
 /**
  * This demonstrates the nature of Gibbs sampling, namely some pop and push action on a stack (of counting variables).
+ * 
+ * @class_param z[][]
+ *   id of topic for document index "m" and word index "n", called the "topic assignment" variable 
+ * @class_param nw[][]
+ *   frequency of word "w" in topic "topic"
+ * @class_param nd[][]
+ *   frequency of document "m" in topic "topic"
+ * @class_param nwsum[]
+ *   total number of words in topic "topic"
+ * @class_param V
+ *   total number of unique words in all topics, called "vocabulary"
+ * @class_param K
+ *   total number of topics
  *
  * We sample a topic z_i from the full conditional probability distribution:
  *   p(z_i=j | z_\i, w) = 
- *     (n_\i, j(w_i) + \beta) / (n_\i, j(.) + W * \beta) * 
+ *     (n_\i, j(w_i) + \beta) / (n_\i, j(.) + V * \beta) * 
  *     (n_\i, j(d_i) + \alpha) / (n_\i, .(d_i) + K * \alpha)
  *
  * Here z_\i indicates all z except for z_i.
@@ -819,13 +827,14 @@ int model::sampling(int m, int n) {
 	p[k] = (nw[w][k] + beta) / (nwsum[k] + Vbeta) *
 		    (nd[m][k] + alpha) / (ndsum[m] + Kalpha);
     }
-    // cumulate multinomial parameters
+    // cumulate multinomial parameters, sum will be in p[K-1]
     for (int k = 1; k < K; k++) {
 	p[k] += p[k - 1];
     }
     // scaled sample because of unnormalized p[]
     double u = ((double)random() / RAND_MAX) * p[K - 1];
-    
+   
+    // get topic with probability beyond u 
     for (topic = 0; topic < K; topic++) {
 	if (p[topic] > u) {
 	    break;
