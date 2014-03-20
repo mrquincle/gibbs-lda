@@ -46,7 +46,7 @@ And the joint probability we can write as a simple multiplication:
 
     p(z,w) = \prod_{i=1}^W p(z_i, w_i)
 
-The marginal p(w) is this same product but summed over all possible values of `z_i`. Note that this notation that 
+The marginal `p(w)` is this same product but summed over all possible values of `z_i`. Note that this notation that 
 iterates over all non-unique samples (words) has to store the same value `p(z_i, w_i)` for identical words.
 
 Now Gibbs sampling amounts to the conditional:
@@ -88,6 +88,17 @@ outside of the while loop). The uncertainty related to this parameters is captur
 There are also hyper-parameters, such as `\alpha` who are used for the above mentioned Dirichlet distribution. These 
 are set currently by the user in the configuration file. Estimation of these values is actually extremely important, 
 because topic models are typically quite sensitive to them. 
+
+Sampling procedure of the topic:
+
+    p(z_i=j|z_-i,w) \propto (N_0 + \beta) / (N_1 + W*\beta) * (N_2 + \alpha) / (N_3 + T*\alpha)
+
+Here `N_0, ..., N_3` are different frequency terms:
+
+    N_0: number of instances of word w assigned to topic j, not including current word
+    N_1: total number of words assigned to topic j, not including current word
+    N_2: number of words in document d_i assigned to topic j, not including current word
+    N_3: total number of words in document d_i, not including current word
 
 ## Structure
 
